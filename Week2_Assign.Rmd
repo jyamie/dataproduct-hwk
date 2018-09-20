@@ -1,0 +1,39 @@
+---
+title: "Week 2 Assignment"
+author: "Jamie Y"
+date: "September 18, 2018"
+always_allow_html: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## SF Neighborhoods
+
+Welcome to San Francisco. Zoom in to check out my fave places to eat.
+
+```{r}
+library("leaflet")
+
+df <- data.frame(lat = c(37.752550, 37.796350, 37.780550, 37.766590, 37.768327),
+                 lng = c(-122.421010, -122.406110, -122.476180, -122.421480, -122.480992),
+                 popup = c("BARZOTTO: best spagetti", "Pot & Noodle: best Chinese noodle soup", "HoDaLa: best Taiwanese vibes", "Sizzling Pot King: best MaLa dry pot, one order can feed a family of 6", "Doggos hangin out here"))
+doggo_icon <- icons(
+  iconUrl = ifelse(df$popup == "Doggos hangin out here",
+    "C:/Users/jyang/Desktop/Coursera_DataProduct/Week2/doggo.png", "C:/Users/jyang/Desktop/Coursera_DataProduct/Week2/yum.png"),
+  iconWidth = 50*215/230, iconHeight = 50,
+  iconAnchorX = 31*215/230/2, iconAnchorY = 16
+)
+
+
+my_map <- df %>%
+  leaflet() %>% 
+  addTiles() %>%
+  addMarkers(clusterOptions = markerClusterOptions(), popup = df$popup, icon = doggo_icon) %>%
+  addRectangles(lat1 = 37.789086, lng1 = -122.411157, 
+                lat2 = 37.786644, lng2 = -122.393312, popup = c("nothing is open here on the weekends"))
+
+my_map
+```
+
