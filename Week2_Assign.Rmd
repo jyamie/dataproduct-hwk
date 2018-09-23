@@ -18,7 +18,7 @@ library("leaflet")
 
 df <- data.frame(lat = c(37.752550, 37.796350, 37.780550, 37.766590, 37.768327),
                  lng = c(-122.421010, -122.406110, -122.476180, -122.421480, -122.480992),
-                 popup = c("BARZOTTO: best spagetti", "Pot & Noodle: best Chinese noodle soup", "HoDaLa: best Taiwanese vibes", "Sizzling Pot King: best MaLa dry pot, one order can feed a family of 6", "Doggos hangin out here"))
+                 popup = c("BARZOTTO: best spaghetti", "Pot & Noodle: best Chinese noodle soup", "HoDaLa: best Taiwanese vibes", "Sizzling Pot King: best MaLa dry pot, one order can feed a family of 6", "Doggos hangin out here"))
 doggo_icon <- icons(
   iconUrl = ifelse(df$popup == "Doggos hangin out here",
     "C:/Users/jyang/Desktop/Coursera_DataProduct/Week2/doggo.png", "C:/Users/jyang/Desktop/Coursera_DataProduct/Week2/yum.png"),
