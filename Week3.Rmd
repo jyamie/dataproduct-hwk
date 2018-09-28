@@ -1,0 +1,40 @@
+---
+title: "Week 3 Assignment"
+author: "Jamie"
+date: "September 28, 2018"
+output: ioslides_presentation
+---
+  
+```{r setup, include=FALSE}
+library('plotly')
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## Boba Consumption
+
+```{r, echo = FALSE, eval = TRUE}
+
+boba_intake <- data.frame(cbind(c(13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23),
+                 c(1, 1, 2, 1, 3, 5, 7, 10, 28, 30, 31),
+                 c(1, 1, 2, 2, 1, 2, 2, 1, 1, 1, 1)))
+names(boba_intake) <- c('Age', 'Cups', 'Avg_Cups')
+
+plot_ly(boba_intake, x = ~Age) %>%
+  add_trace(y = ~Cups, name = 'My Intake', mode = 'lines+markers', type = 'scatter',
+            marker = list(size = 10,
+                       color = 'rgba(255, 182, 193, .9)',
+                       line = list(color = 'rgba(255, 94, 94, .8)',
+                                   width = 2)),
+            line = list(color = 'rgba(255, 182, 193, .9)')) %>%
+  add_trace(y = ~Avg_Cups, name = 'A Normal Person\'s Intake', mode = 'lines+markers', type = 'scatter',
+            marker = list(size = 10,
+                       color = 'rgba(255, 196, 130, .9)',
+                       line = list(color = 'rgba(255, 145, 21, .8)',
+                                   width = 2)),
+            line = list(color = 'rgba(255, 196, 130, .9)')) %>%
+  layout(yaxis = list(title = "# Cups per Month", showgrid = FALSE), 
+         xaxis = list(title = "Age", showgrid = FALSE),
+         legend = list(x = 0.1, y = 0.9))
+```
+
