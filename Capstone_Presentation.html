@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>College PRO</title>
+  <meta charset="utf-8">
+  <meta name="description" content="College PRO">
+  <meta name="author" content="Jamie">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="libraries/widgets/bootstrap/css/bootstrap.css"></link>
+<link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>College PRO</h1>
+    <h2>Data Products Capstone</h2>
+    <p>Jamie<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>College PRO: Welcome!</h2>
+  </hgroup>
+  <article data-timings="">
+    <blockquote>
+<h3>High school student struggling to decide between a couple colleges?</h3>
+</blockquote>
+
+<p><strong>Don&#39;t fret!!</strong> College PRO provides easy, intuitive side-by-side comparison for as many schools as you&#39;d like. </p>
+
+<p>All <em>YOU</em> have to do is input any U.S. school name, and the tool will automatically populate with graphs and data of:</p>
+
+<ul>
+<li>Standardized test scores</li>
+<li>Racial diversity</li>
+</ul>
+
+<h3>Shiny Application</h3>
+
+<ul>
+<li>URL: <em><a href="https://jyamie.shinyapps.io/capstone_app/">https://jyamie.shinyapps.io/capstone_app/</a></em></li>
+</ul>
+
+<h3>Reproducible Pitch Presentation</h3>
+
+<ul>
+<li>You&#39;re right here!</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>Server Reactive Function</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">  get_college_data &lt;- reactive({
+    return(scorecard[scorecard$INSTNM %in% input$select_college,])
+  })
+</code></pre>
+
+<blockquote>
+<h3>Next, we&#39;ll walk through an example where the user inputs Wellesley College and University of California-Berkeley into the application</h3>
+</blockquote>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Calculation &amp; analysis in the server: example</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r"># format race columns
+scorecard[,c(race_num)] &lt;- apply(scorecard[,c(race_num)], 2, function(x) as.numeric(as.character(x))*100)
+# User inputs college(s) they want to investigate, so we will pull those rows from the data
+df &lt;- scorecard[scorecard$INSTNM %in% c(&quot;Wellesley College&quot;, &quot;University of California-Berkeley&quot;),]
+
+# Get demographics data in desired format
+df &lt;- melt(df[,c(&quot;INSTNM&quot;, race_num)])
+df &lt;- merge(df, data.frame(race_num, race_dcde), by.x = &#39;variable&#39;, by.y = &#39;race_num&#39;, all.x = TRUE)
+head(df,4)
+</code></pre>
+
+<table><thead>
+<tr>
+<th>variable</th>
+<th>INSTNM</th>
+<th>value</th>
+<th>race_dcde</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>UGDS_2MOR</td>
+<td>Wellesley College</td>
+<td>5.91</td>
+<td>2+ Races</td>
+</tr>
+<tr>
+<td>UGDS_ASIAN</td>
+<td>Wellesley College</td>
+<td>21.79</td>
+<td>Asian</td>
+</tr>
+<tr>
+<td>UGDS_UNKN</td>
+<td>Wellesley College</td>
+<td>6.00</td>
+<td>Unknown</td>
+</tr>
+<tr>
+<td>UGDS_WHITE</td>
+<td>Wellesley College</td>
+<td>37.49</td>
+<td>White</td>
+</tr>
+</tbody></table>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Next, we plot our data</h2>
+  </hgroup>
+  <article data-timings="">
+    
+<div style='float:left;width:48%;' class='centered'>
+  <p><img src="figure/unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4"></p>
+
+</div>
+<div style='float:right;width:48%;'>
+  <pre><code class="r">ggplot(df, aes(INSTNM,value)) + 
+  geom_bar(stat = &quot;identity&quot;, 
+           aes(fill = race_dcde)) +
+  theme_classic() + 
+  labs(fill = &quot;&quot;, x = &quot;&quot;, y = &quot;%&quot;) +
+  scale_fill_brewer(palette = &quot;Set3&quot;)
+</code></pre>
+
+</div>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='College PRO: Welcome!'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Server Reactive Function'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Calculation &amp; analysis in the server: example'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Next, we plot our data'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  <script src="libraries/widgets/bootstrap/js/bootstrap.min.js"></script>
+<script src="libraries/widgets/bootstrap/js/bootbox.min.js"></script>
+
+  <script>  
+  $(function (){ 
+    $("#example").popover(); 
+    $("[rel='tooltip']").tooltip(); 
+  });  
+  </script>  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
